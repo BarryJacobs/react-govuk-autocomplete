@@ -1,0 +1,71 @@
+.gds-autocomplete {
+	.gds-autocomplete__input-container {
+		input {
+			opacity: 1 !important;
+		}
+	}
+
+	.gds-autocomplete__no-options {
+		font-size: 19px;
+		text-align: left;
+		background-color: #fafafa;
+		color: #646b6f;
+		cursor: not-allowed;
+	}
+
+	.gds-autocomplete__control {
+		font-size: 19px;
+		border: 2px solid #0b0c0c;
+		border-radius: 0;
+		outline-offset: 0;
+
+		&.gds-autocomplete__control--is-focused {
+			outline: 3px solid #ffdd00 !important;
+			box-shadow: inset 0 0 0 2px;
+		}
+
+		&:hover {
+			border: 2px solid #0b0c0c;
+		}
+
+		.gds-autocomplete__indicator-separator {
+			display: none;
+		}
+	}
+
+	.gds-autocomplete__menu {
+		font-size: 19px;
+		max-height: 20em;
+		color: black;
+		top: 1.7em;
+		border-radius: 0;
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+		max-height: inherit;
+		border: 2px solid #0b0c0c;
+		border-top: 0;
+
+		.gds-autocomplete__even {
+			border-top: 1px solid #b1b4b6;
+			background-color: #fafafa;
+			color: #0b0c0c;
+		}
+
+		.gds-autocomplete__option {
+			font-size: 19px;
+			color: #0b0c0c;
+			min-height: 2em;
+			border-bottom: 1px solid #b1b4b6;
+
+			&.gds-autocomplete__option--is-selected {
+				background-color: #1d70b8;
+				color: white;
+			}
+
+			&.gds-autocomplete__option--is-focused {
+				background-color: #1d70b8;
+				color: white;
+			}
+		}
+	}
+}
