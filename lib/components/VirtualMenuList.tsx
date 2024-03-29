@@ -3,7 +3,7 @@ import { useVirtualizer } from "@tanstack/react-virtual"
 import { MenuListProps, GroupBase } from "react-select"
 import { LabelValuePair } from "../interfaces"
 
-const OPTION_HEIGHT = 38
+const OPTION_HEIGHT = 41
 const MAX_HEIGHT = 8 * OPTION_HEIGHT
 
 export const VirtualMenuList = <T extends LabelValuePair>({
@@ -45,21 +45,25 @@ export const VirtualMenuList = <T extends LabelValuePair>({
             width: "100%",
             position: "relative"
           }}>
-          {rowVirtualizer.getVirtualItems().map(item => (
-            <div
-              key={item.key}
-              className={item.index % 2 ? "gds-autocomplete__even" : ""}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: `${item.size}px`,
-                transform: `translateY(${item.start}px)`
-              }}>
-              {rows[item.index]}
-            </div>
-          ))}
+          {rowVirtualizer.getVirtualItems().map((item, index) => {
+            let className = index !== rows.length - 1 ? "virtual-item-divider" : ""
+            className += item.index % 2 ? " gds-autocomplete__even" : ""
+            return (
+              <div
+                key={item.key}
+                className={className}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: `${item.size}px`,
+                  transform: `translateY(${item.start}px)`
+                }}>
+                {rows[item.index]}
+              </div>
+            )
+          })}
         </div>
       </div>
     </>

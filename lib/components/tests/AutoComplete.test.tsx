@@ -163,13 +163,13 @@ describe("AutoComplete", () => {
       await userEvent.type(autoComplete, "{enter}")
     })
 
-    expect(mockOnChange.mock.calls.length).toEqual(2)
-    expect(mockOnChange.mock.calls[0]).toEqual([null])
-    expect(mockOnChange.mock.calls[1]).toEqual([
+    expect(mockOnChange.mock.calls.length).toEqual(1)
+    expect(mockOnChange.mock.calls[0]).toEqual([
       {
         label: "BMW",
         value: "01"
-      }
+      },
+      false
     ])
   })
 
