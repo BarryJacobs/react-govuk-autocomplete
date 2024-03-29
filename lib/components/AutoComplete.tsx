@@ -49,7 +49,7 @@ interface AutoCompleteProps<T extends LabelValuePair> {
   options: T[]
   value: SingleValue<T> | undefined
   getOptionLabel: (value: T) => string
-  onChange: (value: SingleValue<T>) => void
+  onChange: (value: SingleValue<T>, isNew: boolean) => void
 }
 
 export const AutoComplete = <T extends LabelValuePair>({
@@ -71,9 +71,7 @@ export const AutoComplete = <T extends LabelValuePair>({
   getOptionLabel,
   onChange
 }: AutoCompleteProps<T>) => {
-  const [controlOptions, setControlOptions] = useState(options)
-  const [controlValue, setControlValue] = useState(value)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState(value?.label)
   const [hasUpdatedValue, setHasUpdatedValue] = useState(false)
   const [hasFocus, setHasFocus] = useState(false)
   const selectRef = useRef<SelectInstance<T, false, GroupBase<T>>>(null)
@@ -139,8 +137,7 @@ export const AutoComplete = <T extends LabelValuePair>({
   }
 
   const changeHandler = (selectedValue: SingleValue<T>) => {
-    onChange(selectedValue)
-    setControlValue(selectedValue)
+    onChange(selectedValue, false)
     setSearchTerm(selectedValue ? selectedValue.label : "")
   }
 
@@ -164,10 +161,8 @@ export const AutoComplete = <T extends LabelValuePair>({
       label: newValue,
       value: newValue
     } as T
-    setControlOptions(prev => [newOption, ...prev])
-    setControlValue(newOption)
     setSearchTerm(newValue)
-    onChange(newOption)
+    onChange(newOption, true)
   }
 
   const formatLabelHandler = (label: string) =>
@@ -176,9 +171,9 @@ export const AutoComplete = <T extends LabelValuePair>({
   useEffect(() => {
     if (!hasFocus) {
       if (!hasUpdatedValue) {
-        if (controlValue) {
-          if (searchTerm !== controlValue.label) {
-            setSearchTerm(controlValue.label)
+        if (value) {
+          if (searchTerm !== value.label) {
+            setSearchTerm(value.label)
           }
         } else {
           setSearchTerm("")
@@ -187,14 +182,17 @@ export const AutoComplete = <T extends LabelValuePair>({
         setHasUpdatedValue(false)
       }
     }
-  }, [hasFocus, hasUpdatedValue, controlValue, searchTerm])
+  }, [hasFocus, hasUpdatedValue, value, searchTerm])
 
   useEffect(() => {
     if (selectRef.current && !searchTerm) {
-      selectRef.current.clearValue()
       selectRef.current.focusOption(undefined)
     }
   }, [searchTerm])
+
+  useEffect(() => {
+    setSearchTerm(value?.label ?? "")
+  }, [value])
 
   const selectProps = {
     name: identifier,
@@ -213,15 +211,15 @@ export const AutoComplete = <T extends LabelValuePair>({
     captureMenuScroll: false,
     isSearchable: true,
     controlShouldRenderValue: false,
-    value: controlValue,
     inputValue: searchTerm,
+    value,
     onChange: changeHandler,
     onInputChange: inputChangeHandler,
     onKeyDown: keyDownHandler,
     onFocus: focusHandler,
     onBlur: blurHandler,
     placeholder,
-    options: controlOptions,
+    options,
     getOptionLabel,
     isDisabled,
     isLoading
