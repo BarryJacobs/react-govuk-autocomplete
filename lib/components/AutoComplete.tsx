@@ -43,6 +43,7 @@ interface AutoCompleteProps<T extends LabelValuePair> {
   placeholder?: string
   required?: boolean
   allowCreate?: boolean
+  formatCreateLabel?: (label: string) => string
   useUpperCase?: boolean
   containerClassExt?: string
   labelClassExt?: string
@@ -68,6 +69,7 @@ export const AutoComplete = <T extends LabelValuePair>({
   isDisabled = false,
   allowCreate = false,
   useUpperCase = false,
+  formatCreateLabel,
   getOptionLabel,
   onChange
 }: AutoCompleteProps<T>) => {
@@ -99,6 +101,13 @@ export const AutoComplete = <T extends LabelValuePair>({
       id: `${identifier}-label`
     }
   }, [identifier, labelClassExt, multiQuestion])
+
+  const formatCreateLabelHandler = useMemo(() => {
+    return (
+      formatCreateLabel ||
+      ((label: string) => `Use "${useUpperCase ? label.toUpperCase() : label}"`)
+    )
+  }, [formatCreateLabel, useUpperCase])
 
   const customStyles: StylesConfig<T, false> = {
     control: (provided: CSSObjectWithLabel) => ({
@@ -164,9 +173,6 @@ export const AutoComplete = <T extends LabelValuePair>({
     setSearchTerm(newValue)
     onChange(newOption, true)
   }
-
-  const formatLabelHandler = (label: string) =>
-    `Select "${useUpperCase ? label.toUpperCase() : label}"`
 
   useEffect(() => {
     if (!hasFocus) {
@@ -250,7 +256,7 @@ export const AutoComplete = <T extends LabelValuePair>({
           isMulti={false}
           createOptionPosition="first"
           onCreateOption={createOptionHandler}
-          formatCreateLabel={formatLabelHandler}
+          formatCreateLabel={formatCreateLabelHandler}
           {...selectProps}
         />
       ) : (

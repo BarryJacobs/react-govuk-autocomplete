@@ -134,11 +134,11 @@ describe("AutoComplete", () => {
       />
     )
 
-    const select = await screen.findByRole("combobox")
-    expect(select).toBeInTheDocument()
-    expect(select).toHaveClass("gds-autocomplete__input")
-    expect(select).toHaveAttribute("id", "cars")
-    expect(select).toHaveAttribute("aria-invalid", "false")
+    const autoComplete = await screen.findByRole("combobox")
+    expect(autoComplete).toBeInTheDocument()
+    expect(autoComplete).toHaveClass("gds-autocomplete__input")
+    expect(autoComplete).toHaveAttribute("id", "cars")
+    expect(autoComplete).toHaveAttribute("aria-invalid", "false")
   })
 
   it("must call onChange when an option is selected", async () => {
@@ -186,11 +186,45 @@ describe("AutoComplete", () => {
       />
     )
 
-    const select = await screen.findByRole("combobox")
-    expect(select).toBeInTheDocument()
-    expect(select).toHaveClass("gds-autocomplete__input")
-    expect(select).toHaveAttribute("id", "cars")
-    expect(select).toHaveAttribute("aria-invalid", "false")
+    const autoComplete = await screen.findByRole("combobox")
+    expect(autoComplete).toBeInTheDocument()
+    expect(autoComplete).toHaveClass("gds-autocomplete__input")
+    expect(autoComplete).toHaveAttribute("id", "cars")
+    expect(autoComplete).toHaveAttribute("aria-invalid", "false")
+
+    await act(async () => {
+      await userEvent.type(autoComplete, "New option")
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(`Use "New option"`)).toBeInTheDocument()
+    })
+  })
+
+  it("must render creatable select correctly with custom format create label function", async () => {
+    render(
+      <AutoComplete
+        identifier="cars"
+        label="Cars"
+        allowCreate={true}
+        formatCreateLabel={(label: string) => `Custom message "${label}"`}
+        options={cars}
+        value={null}
+        getOptionLabel={x => x.label}
+        onChange={mockOnChange}
+      />
+    )
+
+    const autoComplete = await screen.findByRole("combobox")
+    expect(autoComplete).toBeInTheDocument()
+
+    await act(async () => {
+      await userEvent.type(autoComplete, "New option")
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(`Custom message "New option"`)).toBeInTheDocument()
+    })
   })
 
   it("must render correctly when error is provided", async () => {
@@ -207,9 +241,9 @@ describe("AutoComplete", () => {
       />
     )
 
-    const select = await screen.findByRole("combobox")
-    expect(select).toBeInTheDocument()
-    expect(select).toHaveAttribute("aria-invalid", "true")
+    const autoComplete = await screen.findByRole("combobox")
+    expect(autoComplete).toBeInTheDocument()
+    expect(autoComplete).toHaveAttribute("aria-invalid", "true")
 
     const error = await screen.findByText(errorText)
     expect(error).toBeInTheDocument()
