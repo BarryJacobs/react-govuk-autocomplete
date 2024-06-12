@@ -1,7 +1,7 @@
 {
   "name": "react-govuk-autocomplete",
   "private": false,
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "main": "dist/react-govuk-autocomplete.js",
   "module": "dist/react-govuk-autocomplete.js",
@@ -20,7 +20,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@tanstack/react-virtual": "^3.2.0",
+    "@tanstack/react-virtual": "^3.5.1",
     "react-select": "^5.8.0"
   },
   "devDependencies": {

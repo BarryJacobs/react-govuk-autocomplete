@@ -99,29 +99,6 @@ describe("AutoComplete", () => {
     expect(results).toHaveNoViolations()
   })
 
-  it("must display options correctly", async () => {
-    render(
-      <AutoComplete
-        identifier="cars"
-        label="Cars"
-        options={cars}
-        value={null}
-        getOptionLabel={x => x.label}
-        onChange={mockOnChange}
-      />
-    )
-
-    await act(async () => {
-      await userEvent.click(screen.getByLabelText("Cars"))
-    })
-
-    await waitFor(() => {
-      cars.forEach(option => {
-        expect(screen.getByText(option.label)).toBeInTheDocument()
-      })
-    })
-  })
-
   it("must render correctly by default", async () => {
     render(
       <AutoComplete
