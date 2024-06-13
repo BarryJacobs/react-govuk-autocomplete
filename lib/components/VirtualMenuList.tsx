@@ -17,7 +17,8 @@ export const VirtualMenuList = <T extends LabelValuePair>({
   const virtualizer = useVirtualizer({
     count: (rows as unknown[]).length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => OPTION_HEIGHT
+    estimateSize: () => OPTION_HEIGHT,
+    overscan: 5
   })
 
   useEffect(() => {

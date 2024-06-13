@@ -47,6 +47,7 @@ interface AutoCompleteProps<T extends LabelValuePair> {
   useUpperCase?: boolean
   containerClassExt?: string
   labelClassExt?: string
+  errorClassExt?: string
   options: T[]
   value: SingleValue<T> | undefined
   getOptionLabel: (value: T) => string
@@ -62,6 +63,7 @@ export const AutoComplete = <T extends LabelValuePair>({
   required = false,
   containerClassExt = "",
   labelClassExt = "",
+  errorClassExt = "",
   options,
   value,
   multiQuestion = true,
@@ -80,7 +82,7 @@ export const AutoComplete = <T extends LabelValuePair>({
 
   const containerAttr = {
     className: error
-      ? `govuk-body govuk-form-group govuk-form-group-error ${containerClassExt}`
+      ? `govuk-body govuk-form-group govuk-form-group--error ${containerClassExt}`
       : `govuk-body govuk-form-group ${containerClassExt}`
   }
 
@@ -244,10 +246,10 @@ export const AutoComplete = <T extends LabelValuePair>({
       )}
 
       {error && (
-        <p id={`${identifier}-error`} className="govuk-error-message">
+        <div id={`${identifier}-error`} className={`govuk-error-message ${errorClassExt}`}>
           <span className="govuk-visually-hidden">Error:</span>
           {error}
-        </p>
+        </div>
       )}
 
       {allowCreate ? (
