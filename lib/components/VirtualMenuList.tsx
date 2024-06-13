@@ -1,10 +1,33 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { MenuListProps, GroupBase } from "react-select"
 import { LabelValuePair } from "../interfaces"
 
 const OPTION_HEIGHT = 41
 const MAX_HEIGHT = 8 * OPTION_HEIGHT
+
+const throttle = (func: (...args: any[]) => void, limit: number) => {
+  let lastFunc: ReturnType<typeof setTimeout>
+  let lastRan: number
+  return function (this: any, ...args: any[]) {
+    const context = this
+    if (!lastRan) {
+      func.apply(context, args)
+      lastRan = Date.now()
+    } else {
+      clearTimeout(lastFunc)
+      lastFunc = setTimeout(
+        function () {
+          if (Date.now() - lastRan >= limit) {
+            func.apply(context, args)
+            lastRan = Date.now()
+          }
+        },
+        limit - (Date.now() - lastRan)
+      )
+    }
+  }
+}
 
 export const VirtualMenuList = <T extends LabelValuePair>({
   children: rows,
@@ -14,19 +37,63 @@ export const VirtualMenuList = <T extends LabelValuePair>({
   const parentRef = useRef<HTMLDivElement>(null)
   const rowsAreArray = Array.isArray(rows)
 
+  const [scrollSpeed, setScrollSpeed] = useState(0)
+  const lastScrollTopRef = useRef(0)
+  const lastTimestampRef = useRef(performance.now())
+
+  const calculateScrollSpeed = useCallback(() => {
+    const scrollElement = parentRef.current
+    if (!scrollElement) return
+
+    const currentScrollTop = scrollElement.scrollTop
+    const currentTime = performance.now()
+
+    const scrollDistance = Math.abs(currentScrollTop - lastScrollTopRef.current)
+    const timeElapsed = currentTime - lastTimestampRef.current
+
+    if (timeElapsed > 0) {
+      const currentScrollSpeed = scrollDistance / timeElapsed
+      setScrollSpeed(currentScrollSpeed)
+    }
+
+    lastScrollTopRef.current = currentScrollTop
+    lastTimestampRef.current = currentTime
+  }, [])
+
+  const throttledCalculateScrollSpeed = useCallback(throttle(calculateScrollSpeed, 100), [
+    calculateScrollSpeed
+  ])
+
   const virtualizer = useVirtualizer({
-    count: (rows as unknown[]).length,
+    count: (rows as T[]).length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => OPTION_HEIGHT,
-    overscan: 5
+    overscan: Math.min(20, Math.max(5, Math.floor(scrollSpeed * 10)))
   })
+
+  useEffect(() => {
+    const handleScroll = () => {
+      throttledCalculateScrollSpeed()
+    }
+
+    const scrollElement = parentRef.current
+    if (scrollElement) {
+      scrollElement.addEventListener("scroll", handleScroll)
+    }
+
+    return () => {
+      if (scrollElement) {
+        scrollElement.removeEventListener("scroll", handleScroll)
+      }
+    }
+  }, [throttledCalculateScrollSpeed])
 
   useEffect(() => {
     if (focusedOption && rowsAreArray) {
       const focusedIndex = rows.findIndex(x => x.props?.data?.label === focusedOption.label)
       virtualizer.scrollToIndex(Math.max(focusedIndex, 0), { align: "auto" })
     }
-  }, [focusedOption])
+  }, [focusedOption, rowsAreArray, rows, virtualizer])
 
   if (!rowsAreArray) {
     return <>{rows}</>
