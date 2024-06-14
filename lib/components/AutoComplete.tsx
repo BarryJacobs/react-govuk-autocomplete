@@ -3,6 +3,7 @@ import Select, {
   components,
   DropdownIndicatorProps,
   NoticeProps,
+  OptionProps,
   GroupBase,
   SingleValue,
   SelectInstance,
@@ -139,6 +140,13 @@ export const AutoComplete = <T extends LabelValuePair>({
     )
   }
 
+  const Option = <T extends LabelValuePair>({ children, ...props }: OptionProps<T, false>) => {
+    const { onMouseMove, onMouseOver, ...rest } = props.innerProps
+    const newProps = { ...props, innerProps: rest }
+
+    return <components.Option {...newProps}>{children}</components.Option>
+  }
+
   const focusHandler = () => {
     selectRef.current?.inputRef?.select()
     setHasFocus(true)
@@ -215,7 +223,8 @@ export const AutoComplete = <T extends LabelValuePair>({
     components: {
       DropdownIndicator,
       NoOptionsMessage,
-      MenuList: VirtualMenuList<T>
+      MenuList: VirtualMenuList<T>,
+      Option
     },
     captureMenuScroll: false,
     isSearchable: true,

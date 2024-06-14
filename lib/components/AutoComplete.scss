@@ -56,6 +56,11 @@
       box-sizing: border-box;
       height: 100%;
 
+      &:hover {
+        background-color: #1d70b8;
+        color: white;
+      }
+
       &.gds-autocomplete__option--is-selected {
         background-color: #1d70b8;
         color: white;
