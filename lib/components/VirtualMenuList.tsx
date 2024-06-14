@@ -9,7 +9,8 @@ const MAX_HEIGHT = 8 * OPTION_HEIGHT
 const throttle = (func: (...args: any[]) => void, limit: number) => {
   let lastFunc: ReturnType<typeof setTimeout>
   let lastRan: number
-  return function (this: any, ...args: any[]) {
+
+  const throttled = function (this: any, ...args: any[]) {
     const context = this
     if (!lastRan) {
       func.apply(context, args)
@@ -27,6 +28,12 @@ const throttle = (func: (...args: any[]) => void, limit: number) => {
       )
     }
   }
+
+  throttled.cancel = () => {
+    clearTimeout(lastFunc)
+  }
+
+  return throttled
 }
 
 export const VirtualMenuList = <T extends LabelValuePair>({
@@ -81,6 +88,7 @@ export const VirtualMenuList = <T extends LabelValuePair>({
       if (scrollElement) {
         scrollElement.removeEventListener("scroll", throttledCalculateScrollSpeed)
       }
+      throttledCalculateScrollSpeed.cancel()
     }
   }, [throttledCalculateScrollSpeed])
 

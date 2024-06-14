@@ -8,7 +8,8 @@ import Select, {
   SelectInstance,
   CSSObjectWithLabel,
   InputActionMeta,
-  StylesConfig
+  StylesConfig,
+  createFilter
 } from "react-select"
 import { LabelValuePair } from "../interfaces"
 import { VirtualMenuList } from "./VirtualMenuList"
@@ -258,11 +259,17 @@ export const AutoComplete = <T extends LabelValuePair>({
           isMulti={false}
           createOptionPosition="first"
           onCreateOption={createOptionHandler}
+          filterOption={createFilter({ ignoreAccents: false })}
           formatCreateLabel={formatCreateLabelHandler}
           {...selectProps}
         />
       ) : (
-        <Select ref={selectRef} isMulti={false} {...selectProps} />
+        <Select
+          ref={selectRef}
+          isMulti={false}
+          filterOption={createFilter({ ignoreAccents: false })}
+          {...selectProps}
+        />
       )}
     </div>
   )
