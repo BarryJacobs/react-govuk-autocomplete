@@ -72,18 +72,14 @@ export const VirtualMenuList = <T extends LabelValuePair>({
   })
 
   useEffect(() => {
-    const handleScroll = () => {
-      throttledCalculateScrollSpeed()
-    }
-
     const scrollElement = parentRef.current
     if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll)
+      scrollElement.addEventListener("scroll", throttledCalculateScrollSpeed)
     }
 
     return () => {
       if (scrollElement) {
-        scrollElement.removeEventListener("scroll", handleScroll)
+        scrollElement.removeEventListener("scroll", throttledCalculateScrollSpeed)
       }
     }
   }, [throttledCalculateScrollSpeed])
