@@ -208,6 +208,19 @@ export const AutoComplete = <T extends LabelValuePair>({
   }, [searchTerm])
 
   useEffect(() => {
+    if (selectRef.current) {
+      if (error || hint) {
+        selectRef.current.inputRef?.setAttribute(
+          "aria-describedby",
+          `${error ? `${identifier}-error` : ""} ${hint ? `${identifier}-hint` : ""}`.trim()
+        )
+      } else {
+        selectRef.current.inputRef?.removeAttribute("aria-describedby")
+      }
+    }
+  }, [identifier, hint, error])
+
+  useEffect(() => {
     setSearchTerm(value?.label ?? "")
   }, [value])
 
