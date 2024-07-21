@@ -36,10 +36,10 @@ const throttle = (func: (...args: any[]) => void, limit: number) => {
   return throttled
 }
 
-export const VirtualMenuList = <T extends LabelValuePair>({
+export const VirtualMenuList = ({
   children: rows,
   ...props
-}: MenuListProps<T, false, GroupBase<T>>) => {
+}: MenuListProps<LabelValuePair, false, GroupBase<LabelValuePair>>) => {
   const { focusedOption } = props
   const parentRef = useRef<HTMLDivElement>(null)
   const rowsAreArray = Array.isArray(rows)
@@ -72,7 +72,7 @@ export const VirtualMenuList = <T extends LabelValuePair>({
   ])
 
   const virtualizer = useVirtualizer({
-    count: (rows as T[]).length,
+    count: (rows as LabelValuePair[]).length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => OPTION_HEIGHT,
     overscan: Math.min(20, Math.max(5, Math.floor(scrollSpeed * 10)))

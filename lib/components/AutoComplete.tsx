@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react"
+import { useState, useRef, useEffect, useMemo, useImperativeHandle, forwardRef } from "react"
 import Select, {
   components,
   DropdownIndicatorProps,
@@ -34,7 +34,33 @@ const DropdownArrow = () => {
   )
 }
 
-interface AutoCompleteProps<T extends LabelValuePair> {
+const NoOptionsMessage = (
+  props: NoticeProps<LabelValuePair, boolean, GroupBase<LabelValuePair>>
+) => {
+  return (
+    <components.NoOptionsMessage {...props}>
+      <div className="gds-autocomplete__no-options">No results found</div>
+    </components.NoOptionsMessage>
+  )
+}
+
+const DropdownIndicator = (
+  props: DropdownIndicatorProps<LabelValuePair, boolean, GroupBase<LabelValuePair>>
+) => {
+  return (
+    <components.DropdownIndicator {...props}>
+      <DropdownArrow />
+    </components.DropdownIndicator>
+  )
+}
+
+const Option = ({ children, ...props }: OptionProps<LabelValuePair, false>) => {
+  const { onMouseMove, onMouseOver, ...rest } = props.innerProps
+  const newProps = { ...props, innerProps: rest }
+  return <components.Option {...newProps}>{children}</components.Option>
+}
+
+interface AutoCompleteProps {
   identifier: string
   label: string
   hint?: string
@@ -50,37 +76,37 @@ interface AutoCompleteProps<T extends LabelValuePair> {
   containerClassExt?: string
   labelClassExt?: string
   errorClassExt?: string
-  options: T[]
-  value: SingleValue<T> | undefined
-  getOptionLabel: (value: T) => string
-  onChange: (value: SingleValue<T>, isNew: boolean) => void
+  options: LabelValuePair[]
+  value: SingleValue<LabelValuePair> | undefined
+  onChange: (value: SingleValue<LabelValuePair>, isNew: boolean) => void
 }
 
-export const AutoComplete = <T extends LabelValuePair>({
-  identifier,
-  label,
-  hint,
-  error,
-  placeholder = "",
-  required = false,
-  containerClassExt = "",
-  labelClassExt = "",
-  errorClassExt = "",
-  options,
-  value,
-  multiQuestion = true,
-  isLoading = false,
-  isDisabled = false,
-  allowCreate = false,
-  useUpperCase = false,
-  formatCreateLabel,
-  getOptionLabel,
-  onChange
-}: AutoCompleteProps<T>) => {
+const AutoCompleteComponent = (
+  {
+    identifier,
+    label,
+    hint,
+    error,
+    placeholder = "",
+    required = false,
+    containerClassExt = "",
+    labelClassExt = "",
+    errorClassExt = "",
+    options,
+    value,
+    multiQuestion = true,
+    isLoading = false,
+    isDisabled = false,
+    allowCreate = false,
+    useUpperCase = false,
+    formatCreateLabel,
+    onChange
+  }: AutoCompleteProps,
+  ref: React.Ref<SelectInstance<LabelValuePair, false, GroupBase<LabelValuePair>> | undefined>
+) => {
   const [searchTerm, setSearchTerm] = useState(value?.label)
-  const [hasUpdatedValue, setHasUpdatedValue] = useState(false)
-  const [hasFocus, setHasFocus] = useState(false)
-  const selectRef = useRef<SelectInstance<T, false, GroupBase<T>>>(null)
+  const selectRef = useRef<SelectInstance<LabelValuePair, false, GroupBase<LabelValuePair>>>(null)
+  useImperativeHandle(ref, () => selectRef.current || undefined)
 
   const containerAttr = {
     className: error
@@ -113,59 +139,48 @@ export const AutoComplete = <T extends LabelValuePair>({
     )
   }, [formatCreateLabel, useUpperCase])
 
-  const customStyles: StylesConfig<T, false> = {
-    control: (provided: CSSObjectWithLabel) => ({
-      ...provided,
-      borderColor: error ? "#d4351c !important" : "#0b0c0c"
+  const customStyles: StylesConfig<LabelValuePair, false> = useMemo(
+    () => ({
+      control: (provided: CSSObjectWithLabel) => ({
+        ...provided,
+        borderColor: error ? "#d4351c !important" : "#0b0c0c"
+      }),
+      indicatorsContainer: (provided: CSSObjectWithLabel) => ({
+        ...provided,
+        pointerEvents: "none"
+      })
     }),
-    indicatorsContainer: (provided: CSSObjectWithLabel) => ({
-      ...provided,
-      pointerEvents: "none"
-    })
-  }
-
-  const NoOptionsMessage = (props: NoticeProps<T, boolean, GroupBase<T>>) => {
-    return (
-      <components.NoOptionsMessage {...props}>
-        <div className="gds-autocomplete__no-options">No results found</div>
-      </components.NoOptionsMessage>
-    )
-  }
-
-  const DropdownIndicator = (props: DropdownIndicatorProps<T, boolean, GroupBase<T>>) => {
-    return (
-      <components.DropdownIndicator {...props}>
-        <DropdownArrow />
-      </components.DropdownIndicator>
-    )
-  }
-
-  const Option = <T extends LabelValuePair>({ children, ...props }: OptionProps<T, false>) => {
-    const { onMouseMove, onMouseOver, ...rest } = props.innerProps
-    const newProps = { ...props, innerProps: rest }
-
-    return <components.Option {...newProps}>{children}</components.Option>
-  }
+    [error]
+  )
 
   const focusHandler = () => {
     selectRef.current?.inputRef?.select()
-    setHasFocus(true)
   }
 
   const blurHandler = () => {
-    setHasFocus(false)
+    const matchingSearchValue = options.find(x => x.label === searchTerm)
+    if (matchingSearchValue && matchingSearchValue !== value) {
+      onChange(matchingSearchValue, false)
+    }
   }
 
-  const changeHandler = (selectedValue: SingleValue<T>) => {
+  const changeHandler = (selectedValue: SingleValue<LabelValuePair>) => {
     onChange(selectedValue, false)
-    setSearchTerm(selectedValue ? selectedValue.label : "")
+    if (selectedValue) {
+      setSearchTerm(selectedValue.label)
+    }
   }
 
   const inputChangeHandler = (inputValue: string, { action }: InputActionMeta) => {
     if (action === "input-change") {
       setSearchTerm(useUpperCase ? inputValue.toUpperCase() : inputValue)
-    } else if (action === "set-value") {
-      setHasUpdatedValue(true)
+      if (selectRef.current?.hasValue()) {
+        selectRef.current?.clearValue()
+        onChange(null, false)
+        setTimeout(() => {
+          selectRef.current?.focusOption(undefined)
+        }, 10)
+      }
     }
   }
 
@@ -177,35 +192,13 @@ export const AutoComplete = <T extends LabelValuePair>({
 
   const createOptionHandler = (label: string) => {
     const newValue = useUpperCase ? label.toUpperCase() : label
-    const newOption = {
+    const newOption: LabelValuePair = {
       label: newValue,
       value: newValue
-    } as T
+    }
     setSearchTerm(newValue)
     onChange(newOption, true)
   }
-
-  useEffect(() => {
-    if (!hasFocus) {
-      if (!hasUpdatedValue) {
-        if (value) {
-          if (searchTerm !== value.label) {
-            setSearchTerm(value.label)
-          }
-        } else {
-          setSearchTerm("")
-        }
-      } else {
-        setHasUpdatedValue(false)
-      }
-    }
-  }, [hasFocus, hasUpdatedValue, value, searchTerm])
-
-  useEffect(() => {
-    if (selectRef.current && !searchTerm) {
-      selectRef.current.focusOption(undefined)
-    }
-  }, [searchTerm])
 
   useEffect(() => {
     if (selectRef.current) {
@@ -220,10 +213,6 @@ export const AutoComplete = <T extends LabelValuePair>({
     }
   }, [identifier, hint, error])
 
-  useEffect(() => {
-    setSearchTerm(value?.label ?? "")
-  }, [value])
-
   const selectProps = {
     name: identifier,
     required,
@@ -236,7 +225,7 @@ export const AutoComplete = <T extends LabelValuePair>({
     components: {
       DropdownIndicator,
       NoOptionsMessage,
-      MenuList: VirtualMenuList<T>,
+      MenuList: VirtualMenuList,
       Option
     },
     captureMenuScroll: false,
@@ -251,7 +240,6 @@ export const AutoComplete = <T extends LabelValuePair>({
     onBlur: blurHandler,
     placeholder,
     options,
-    getOptionLabel,
     isDisabled,
     isLoading
   }
@@ -296,3 +284,8 @@ export const AutoComplete = <T extends LabelValuePair>({
     </div>
   )
 }
+
+export const AutoComplete = forwardRef<
+  SelectInstance<LabelValuePair, false, GroupBase<LabelValuePair>> | undefined,
+  AutoCompleteProps
+>(AutoCompleteComponent)

@@ -1,7 +1,7 @@
 {
   "name": "react-govuk-autocomplete",
   "private": false,
-  "version": "1.0.13",
+  "version": "1.1.0",
   "type": "module",
   "main": "dist/react-govuk-autocomplete.js",
   "module": "dist/react-govuk-autocomplete.js",

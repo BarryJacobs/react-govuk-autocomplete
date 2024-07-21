@@ -41,7 +41,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
@@ -60,7 +59,6 @@ describe("AutoComplete", () => {
         containerClassExt="govuk-input--width-20"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         error={"error"}
         hint={"hint"}
@@ -84,7 +82,6 @@ describe("AutoComplete", () => {
         containerClassExt="govuk-input--width-20"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         error={"error"}
         hint={"hint"}
@@ -106,7 +103,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
@@ -126,7 +122,6 @@ describe("AutoComplete", () => {
         options={cars}
         value={null}
         allowCreate={true}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
@@ -158,7 +153,6 @@ describe("AutoComplete", () => {
         allowCreate={true}
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
@@ -187,7 +181,6 @@ describe("AutoComplete", () => {
         formatCreateLabel={(label: string) => `Custom message "${label}"`}
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
@@ -212,7 +205,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         error={errorText}
       />
@@ -236,7 +228,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         hint={hintText}
       />
@@ -256,7 +247,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         labelClassExt={labelClassExt}
       />
@@ -274,7 +264,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
         containerClassExt={containerClassExt}
       />
@@ -291,7 +280,6 @@ describe("AutoComplete", () => {
         label="Cars"
         options={cars}
         value={null}
-        getOptionLabel={x => x.label}
         onChange={mockOnChange}
       />
     )
