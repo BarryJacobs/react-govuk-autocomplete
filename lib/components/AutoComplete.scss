@@ -57,15 +57,10 @@
       height: 100%;
 
       &:hover {
-        background-color: #1d70b8;
-        color: white;
+        background-color: #deebff;
       }
 
-      &.gds-autocomplete__option--is-selected {
-        background-color: #1d70b8;
-        color: white;
-      }
-
+      &.gds-autocomplete__option--is-selected,
       &.gds-autocomplete__option--is-focused {
         background-color: #1d70b8;
         color: white;
