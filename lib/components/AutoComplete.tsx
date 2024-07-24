@@ -177,9 +177,6 @@ const AutoCompleteComponent = (
       if (selectRef.current?.hasValue()) {
         selectRef.current?.clearValue()
         onChange(null, false)
-        setTimeout(() => {
-          selectRef.current?.focusOption(undefined)
-        }, 10)
       }
     }
   }
@@ -212,6 +209,10 @@ const AutoCompleteComponent = (
       }
     }
   }, [identifier, hint, error])
+
+  useEffect(() => {
+    selectRef.current?.focusOption("first")
+  }, [searchTerm])
 
   const selectProps = {
     name: identifier,

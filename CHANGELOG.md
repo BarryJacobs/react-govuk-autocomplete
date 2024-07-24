@@ -10,3 +10,7 @@
 ## 1.1.1 2024-07-22
 
 - Modified hover styling to separate visually from selected/focused option
+
+## 1.1.2 2024-07-24
+
+- Modified search term changes to set focus to the first menu option to fix focus issue with creatable selects
