@@ -56,14 +56,21 @@
       box-sizing: border-box;
       height: 100%;
 
-      &:hover {
-        background-color: #deebff;
+      &.gds-autocomplete__option--is-focused {
+        background-color: #ffdd00;
       }
 
-      &.gds-autocomplete__option--is-selected,
-      &.gds-autocomplete__option--is-focused {
+      &.gds-autocomplete__option--is-selected {
         background-color: #1d70b8;
         color: white;
+
+        &:hover {
+          background-color: #1d70b8;
+        }
+      }
+
+      &:hover:not(.gds-autocomplete__option--is-selected) {
+        background-color: #deebff;
       }
     }
   }

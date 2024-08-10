@@ -14,3 +14,7 @@
 ## 1.1.2 2024-07-24
 
 - Modified search term changes to set focus to the first menu option to fix focus issue with creatable selects
+
+## 1.1.3 2024-08-10
+
+- Modified keyboard focused menu items to use the gds focus colour to differentiate fully between selected, focused and hover states
