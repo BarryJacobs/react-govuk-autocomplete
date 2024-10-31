@@ -18,3 +18,7 @@
 ## 1.1.3 2024-08-10
 
 - Modified keyboard focused menu items to use the gds focus colour to differentiate fully between selected, focused and hover states
+
+## 1.1.4 2024-10-31
+
+- Fix for populated value not displaying when control is disabled
