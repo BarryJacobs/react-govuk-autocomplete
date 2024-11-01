@@ -22,3 +22,7 @@
 ## 1.1.4 2024-10-31
 
 - Fix for populated value not displaying when control is disabled
+
+## 1.1.5 2024-11-01
+
+- Fixed issue with manually setting value not updating search term

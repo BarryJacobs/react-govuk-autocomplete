@@ -104,7 +104,7 @@ const AutoCompleteComponent = (
   }: AutoCompleteProps,
   ref: React.Ref<SelectInstance<LabelValuePair, false, GroupBase<LabelValuePair>> | undefined>
 ) => {
-  const [searchTerm, setSearchTerm] = useState(value?.label)
+  const [searchTerm, setSearchTerm] = useState("")
   const selectRef = useRef<SelectInstance<LabelValuePair, false, GroupBase<LabelValuePair>>>(null)
   useImperativeHandle(ref, () => selectRef.current || undefined)
 
@@ -213,6 +213,12 @@ const AutoCompleteComponent = (
   useEffect(() => {
     selectRef.current?.focusOption("first")
   }, [searchTerm])
+
+  useEffect(() => {
+    if (value) {
+      setSearchTerm(value.label)
+    }
+  }, [value])
 
   const selectProps = {
     name: identifier,
