@@ -158,9 +158,13 @@ const AutoCompleteComponent = (
   }
 
   const blurHandler = () => {
-    const matchingSearchValue = options.find(x => x.label === searchTerm)
+    const matchingSearchValue = options.find(
+      x => x.label.toLowerCase() === searchTerm.toLowerCase()
+    )
     if (matchingSearchValue && matchingSearchValue !== value) {
       onChange(matchingSearchValue, false)
+    } else if (!(matchingSearchValue || value)) {
+      setSearchTerm("")
     }
   }
 

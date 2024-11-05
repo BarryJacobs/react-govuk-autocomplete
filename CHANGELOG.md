@@ -26,3 +26,11 @@
 ## 1.1.5 2024-11-01
 
 - Fixed issue with manually setting value not updating search term
+
+## 1.1.7 2024-11-01
+
+- Fixed issue with injected css
+
+## 1.1.8 2024-11-05
+
+- Fixed issue with control losing focus with non item text in input
