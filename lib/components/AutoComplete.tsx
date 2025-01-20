@@ -143,14 +143,22 @@ const AutoCompleteComponent = (
     () => ({
       control: (provided: CSSObjectWithLabel) => ({
         ...provided,
-        borderColor: error ? "#d4351c !important" : "#0b0c0c"
+        borderColor: error ? "#d4351c !important" : "#0b0c0c",
+        cursor: isDisabled ? "not-allowed" : "default",
+        opacity: isDisabled ? 0.5 : 1,
+        pointerEvents: "auto"
+      }),
+      input: (provided: CSSObjectWithLabel) => ({
+        ...provided,
+        cursor: isDisabled ? "not-allowed" : "default",
+        pointerEvents: isDisabled ? "none" : "auto"
       }),
       indicatorsContainer: (provided: CSSObjectWithLabel) => ({
         ...provided,
         pointerEvents: "none"
       })
     }),
-    [error]
+    [error, isDisabled]
   )
 
   const focusHandler = () => {
